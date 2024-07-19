@@ -1,50 +1,64 @@
-import { useEffect, useState } from 'react'
-import React from 'react'
-import { staticTemplate } from '../constants/StaticTemplate';
+import { useEffect, useState } from "react";
+import React from "react";
+import { staticTemplate } from "../constants/StaticTemplate";
+import CodeEditorTextArea from "@uiw/react-textarea-code-editor";
 
-export const CodeEditor = () => {
-    const [comp, setComp] = useState<any>();
-    const [code, setCode] = useState(staticTemplate);
-    const [snippet, setSnippet] = useState(staticTemplate);
+type Props = {
+  onChange: Function;
+};
 
-    const handleInputChange = (event) => {
-        setCode(event);
-        setSnippet(event);
-        localStorage.setItem('codeSnippet', event);
-    };
+export const CodeEditor = ({ onChange }: Props) => {
+  const [code, setCode] = useState(staticTemplate);
 
-    const Comps = comp;
+  useEffect(() => {
+    var initialCode: string =
+      localStorage.getItem("savedCode") || "";
+    if (initialCode === ""){
+        initialCode = staticTemplate
+    }
+    console.log(initialCode);
+    setCode(initialCode)
+    onChange((result) => ({
+      ...result,
+      code: {
+        type: "code",
+        value: initialCode,
+        displayValue: initialCode,
+      },
+    }));
+  }, []);
 
-    useEffect(() => {
-        if (window) {
-            import("@uiw/react-codemirror").then((obj) => {
-                if (!comp) {
-                    setComp(obj.default);
-                }
-            });
-        }
-    }, []);
+  const handleInputChange = (event) => {
+    const value = event.target.value;
+    setCode(value);
+    onChange((answers) => {
+      answers["code"] = {
+        type: "code",
+        value: value,
+        displayValue: value,
+      };
+      return answers;
+    });
+    localStorage.setItem("savedCode", value);
+  };
 
-    return (
-        <div className='flex gap-2 items-start w-full'>
-            {Comps && (
-                <Comps className='text-black overflow-y-auto w-full'
-                    value={staticTemplate}
-                    height='700px'
-                    theme='dark'
-                    options={{
-                        mode: "js",
-                        editable: true,
-                    }}
-                    onChange={handleInputChange}
-                />
-            )}
-            <iframe 
-                className='w-full min-h-[700px]'
-                srcDoc={snippet} 
-            />
-        </div >
-    )
-}
+  return (
+    <div className="flex justify-between w-full grow min-h-0">
+      <div className="w-1/2 overflow-scroll">
+        <CodeEditorTextArea
+          language="js"
+          value={code}
+          onChange={handleInputChange}
+          className="w-full min-h-full font-mono text-sm"
+        />
+      </div>
+      <div className="h-full w-1/2 bg-gray-200">
+        <div className="max-h-full aspect-square ml-auto mb-auto">
+          <iframe srcDoc={code} className="h-full w-full"></iframe>
+        </div>
+      </div>
+    </div>
+  );
+};
 
-export default CodeEditor
+export default CodeEditor;

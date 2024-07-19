@@ -6,9 +6,9 @@ import { Page } from '../components/Page';
 export function LandingPage() {
   return (
     <Page>
-      <div className="relative flex items-center justify-center min-h-screen">
+      <div className="relative flex items-center justify-center h-dvh">
         <div className="fixed top-0 right-0 bottom-0 left-0 z-[1] overflow-hidden">
-          <video playsInline autoPlay muted loop className="min-w-full min-h-full w-auto h-auto">
+          <video playsInline autoPlay muted loop className="min-w-full min-h-full w-auto h-auto object-cover">
             <source src="src/assets/backgroundgif.mp4" type="video/mp4" />
           </video>
         </div>

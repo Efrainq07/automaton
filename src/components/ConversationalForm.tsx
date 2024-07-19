@@ -2,20 +2,20 @@ import React, { useState } from 'react';
 import { ArrowLeftIcon } from '../icons/ArrowLeftIcon';
 import { Button } from './Button';
 import { Input } from './Input';
+import {Answers} from '../types/Answers';
+import {Question} from '../types/Question';
 
-const questions = [
-  { id: 1, name: 'collectionName', label: "How will you name your collection?", type: 'text' },
-  { id: 2, name: 'symbolName', label: "Set a name for your symbol", type: 'text' },
-  { id: 3, name: 'description', label: "Write an interesting description", type: 'text' },
-  { id: 4, name: 'mintCost', label: "How much will each mint cost?", type: 'text' },
-  { id: 5, name: 'externalUrl', label: "What is your project URL?", type: 'text' },
-  { id: 6, name: 'coverImage', label: "Upload an image for your collection cover", type: 'file' },
-];
+type Props = {
+  handleBack: Function,
+  questions: Question[],
+  setResult: Function,
+  handleFinished: Function
+}
 
-export function ConversationalForm({handleBack: handleBackProp}: Props) {
+export function ConversationalForm({handleBack: handleBackProp, questions, setResult, handleFinished}: Props) {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [previousQuestionIndex, setPreviousQuestionIndex] = useState(0);
-  const [answers, setAnswers] = useState({});
+  const [answers, setAnswers] = useState<Answers>({})
 
   const handleNext = (e) => {
     e.preventDefault();
@@ -23,7 +23,8 @@ export function ConversationalForm({handleBack: handleBackProp}: Props) {
       setPreviousQuestionIndex(currentQuestionIndex);
       setCurrentQuestionIndex(currentQuestionIndex + 1);
     } else {
-      console.log('Form submission:', answers);
+      setResult((result) => ({...result, ...answers}))
+      handleFinished()
     }
   };
 
@@ -37,11 +38,28 @@ export function ConversationalForm({handleBack: handleBackProp}: Props) {
     }
   }
 
-  const handleChange = (e) => {
+  const handleFileChange = (e) => {
+    const { name, value, files } = e.target;
+    setAnswers({
+      ...answers,
+      [name]: {
+        value: files[0],
+        displayValue: value,
+        type: 'file'
+      },
+    });
+  };
+
+
+  const handleTextChange = (e) => {
     const { name, value } = e.target;
     setAnswers({
       ...answers,
-      [name]: value,
+      [name]: {
+        value: value,
+        displayValue: value,
+        type: 'text'
+      },
     });
   };
 
@@ -59,21 +77,17 @@ export function ConversationalForm({handleBack: handleBackProp}: Props) {
           type={currentQuestion.type}
           label={currentQuestion.label}
           name={currentQuestion.name}
-          onChange={handleChange}
-          value={answers[currentQuestion.name]}
+          onChange={currentQuestion.type === 'file'? handleFileChange : handleTextChange}
+          value={answers[currentQuestion.name]?.displayValue}
           autoFocus
         />
         <div className='flex gap-2 items-center'>
           <Button type="submit" className={`${isLastStep && 'w-full'}`}>
-            {isLastStep ? 'Generate collection' : 'OK'}
+            OK
           </Button>
           {!isLastStep && <p>press Enter</p>}
         </div>
       </div>
     </form>
   );
-}
-
-type Props = {
-  handleBack: Function
 }

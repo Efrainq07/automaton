@@ -6,6 +6,9 @@ export default {
   ],
   theme: {
     extend: {
+      backgroundImage: {
+        'hero-pattern': "src/assets/backgroundgif.mp4"
+      }
     }
   },
   plugins: [],
