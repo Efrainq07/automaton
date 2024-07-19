@@ -20,6 +20,7 @@ const questions : Question[] = [
 export function CreateCollectionPage() {
   const [showStage, setShowStage] = useState(0)
   const [result, setResult] = useState<Answers>({});
+  const [startQuestionIndex, setStartQuestionIndex] = useState(0)
   return (
     <Page itemsStart={showStage === 0} scrollable={showStage === 2}>
             {showStage === 0 && (
@@ -28,7 +29,10 @@ export function CreateCollectionPage() {
                   <h1 className="text-3xl ml-4">
                     Create your collection
                   </h1>
-                  <Button onClick={() => setShowStage(prevShowStage => prevShowStage+1)}>
+                  <Button onClick={() => {
+                    setShowStage(prevShowStage => prevShowStage+1)
+                    setStartQuestionIndex(0)
+                    }}>
                     Continue
                   </Button>
                 </div>
@@ -37,11 +41,14 @@ export function CreateCollectionPage() {
             )}
             {showStage === 1 && (
               <div className='grow flex flex-row items-center'>
-              <ConversationalForm handleBack={() => setShowStage(prevShowForm => prevShowForm-1)} questions={questions} setResult={setResult} handleFinished={() => setShowStage(prevShowForm => prevShowForm+1)}/>
+              <ConversationalForm result={result} startIndex={startQuestionIndex} handleBack={() => setShowStage(prevShowForm => prevShowForm-1)} questions={questions} setResult={setResult} handleFinished={() => setShowStage(prevShowForm => prevShowForm+1)}/>
               </div>
             )}
             {showStage === 2 && (
-              <PreviewCollectionSettings handleBack={() => setShowStage(prevShowForm => prevShowForm-1)} settings={result}/>
+              <PreviewCollectionSettings handleBack={() => {
+                setShowStage(prevShowForm => prevShowForm-1)
+                setStartQuestionIndex(5)
+              }} settings={result}/>
             )}
     </Page>
   );

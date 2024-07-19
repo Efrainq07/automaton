@@ -12,7 +12,7 @@ export function Input({
   const [isTouched, setIsTouched] = useState(false);
 
   const isValid = value.trim() !== '';
-  const showInvalidFeedback = !isValid && isTouched;
+  const showInvalidFeedback = !isValid && isTouched && type !== 'file';
 
   const handleChange: ChangeEventHandler<HTMLInputElement> = (event) => {
     onChange && onChange(event);

@@ -16,7 +16,6 @@ export const CodeEditor = ({ onChange }: Props) => {
     if (initialCode === ""){
         initialCode = staticTemplate
     }
-    console.log(initialCode);
     setCode(initialCode)
     onChange((result) => ({
       ...result,

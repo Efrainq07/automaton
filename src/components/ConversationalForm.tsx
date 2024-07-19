@@ -8,14 +8,18 @@ import {Question} from '../types/Question';
 type Props = {
   handleBack: Function,
   questions: Question[],
+  startIndex: number,
   setResult: Function,
+  result: Answers,
   handleFinished: Function
 }
 
-export function ConversationalForm({handleBack: handleBackProp, questions, setResult, handleFinished}: Props) {
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+export function ConversationalForm({handleBack: handleBackProp, startIndex = 0, questions, result, setResult, handleFinished}: Props) {
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(startIndex);
   const [previousQuestionIndex, setPreviousQuestionIndex] = useState(0);
-  const [answers, setAnswers] = useState<Answers>({})
+  var resultCopy = {...result}
+  delete resultCopy.coverImage
+  const [answers, setAnswers] = useState<Answers>(resultCopy)
 
   const handleNext = (e) => {
     e.preventDefault();
